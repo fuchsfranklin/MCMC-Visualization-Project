@@ -263,7 +263,7 @@ ui <- navbarPage(theme = shinytheme("flatly"),
 ###################################################################
                  tabPanel(title = "References",
                           h2("References"),
-                          h2("Aknowledgements"),
+                          h3("Aknowledgement"),
                           p("I would like to thank Professor Deena Schmidt for the recommendation of doing such a personal project to supplement her Stochastic Models and Simulation course."),
                           h4("Papers"),
                           tags$ul(
