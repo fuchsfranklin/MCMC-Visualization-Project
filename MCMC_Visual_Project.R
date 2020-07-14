@@ -1,3 +1,6 @@
+###################################################################
+# Libraries
+###################################################################
 library(shiny)
 library(shinythemes)
 library(ggplot2)
@@ -8,22 +11,27 @@ library(tidyr)
 library(gifski)
 theme_set(theme_bw())
 
-#UI
+###################################################################
+# UI
 ###################################################################
 ui <- navbarPage(theme = shinytheme("flatly"),
                  
                  title = "Metropolis-Hastings MCMC",
                  
-#Pages                 
-###################################################################                 
+###################################################################
+# Introductory Tab
+###################################################################                
                  tabPanel(withMathJax(),
+                          
                           title = "Introduction and Background",
+                          
                           h1("Introduction and Background"),
                           hr(),
                           h4("A Stochastic Models and Simulation Project"),
                           h4(a("Franklin Fuchs", href = "https://franklinfuchs.shinyapps.io/franklinfuchs/")),
                           h6("University of Nevada, Reno"),
                           hr(),
+                          
                           h2("Introduction"),
                           withMathJax(sprintf("The aim of this stochastic models and simulation project is to understand the metropolis-hastings algorithm and several markov-chain-monte-carlo diagnostic methods at a more intuitive and visual level through plots that are both animated and interactive. My second aim is to present my first aim in a cohesive and compect manner to those unfamiliar with MCMC and the R programming language. It is important to mention that the time-dependent nature of a markov chain and the amount of visually appealing parameters are optimal for creating animated illustrations. This project was developed as a Web-Application using R-Shiny. The next step I will take for this project is to add a tab that brings all other concepts together in one cohesive analysis.")),
                           h2("Markov Chains and MCMC"),
@@ -45,6 +53,7 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                                                 sprintf("Concerning penalised model selection, maximum likelihood estimates are first found for each model seperately and then one model is selected via selection term such as \\(AIC\\) or \\(BIC\\), where the set of initial models can be very large.")))
                           ),
                           tags$br(),
+                          
                           h2("Metropolis-Hastings MCMC"),
                           withMathJax(sprintf("Now that we have defined markov chains and considered applications of MCMC, we can finally consider the metropolis-hastings (MH) algorithm. We use the MH-algorithm to generate a sequence of random samples, which can be used to approximate a distribution directly or a distribution parameter of a high-dimensional distribution, where sampling is difficult, through integration. An important property of the MH-Algorithm is that we can draw samples from any probability distribution \\(P(x)\\) provided that can compute the probability density function of \\(g(x)\\) such that \\(g(x) \\propto P(x) \\). Let us now consider the actual algorithm, for which we define target distribution \\(p(x)\\), proposal distribution \\(q(x^*|x)\\) and acceptance probability \\(A(x,x^*)\\), where we have the algorithm as")),
                           tags$br(),
@@ -65,9 +74,14 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                           p("Considering the algorithm above, observe that it generates a random walk using a proposal distribution which can be used as a sample from which statistics corresponding to the target distribution can be computed from. To view the animated algorithm on several simple distributions, view the animated sampling tab. To conclude this introduction, it is important to mention that real-world target distributions are more complicated, harder to compute, and often without a normalizing constant than the illustrative examples that are used in these illustrative examples.")
                  ),
 
-################################################################### 
+###################################################################
+# Sampling Tab
+###################################################################   
                  navbarMenu(title = "Animated Sampling",
                             
+###################################################################
+# Uniform Proposal & Normal Target Sub-Tab
+################################################################### 
                           tabPanel(title = "Uniform Proposal & Normal Target",
                           h1("Uniform Proposal & Normal Target"),
                           tags$ul(
@@ -75,6 +89,7 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                             tags$li("To simualate a chain that mixes well, start the animation with unchanged default parameters."),
                             tags$li("Animations might take a while to render.")
                           ),
+                          
                           sidebarLayout(
                             sidebarPanel(
                               tags$h3("Sampling Parameters"),
@@ -95,23 +110,29 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                                                       label=withMathJax(sprintf("Target \\(\\sigma\\)")),
                                                       value=1))
                               ),
+                              
                               actionButton(inputId="go1",
                                            label="Start Animation"),
-                            ), #endsidebarpanel
+                            ),
                             mainPanel(
                               column(4,withLoader(imageOutput("hist1"),type="html",loader="loader6")),
                               column(8,imageOutput("plot1")),
-                            )#end mainpanel
-                          )# end sidebarlayout
+                            )
+                          )
                        ),
                        
+###################################################################
+# Normal Proposal & Normal Target Sub-Tab
+###################################################################                        
                        tabPanel(title = "Normal Proposal & Normal Target",
+                                
                                 h1("Normal Proposal & Normal Target"),
                                 tags$ul(
                                   tags$li(withMathJax(sprintf("Enter parameters for \\(N_p\\sim (\\mu_p,\\sigma_p)\\) and \\(N_t\\sim (\\mu_t,\\sigma_t)\\)."))),
                                   tags$li("To simulate a chain that mixes well, start the animation with unchanged default parameters."),
                                   tags$li("Animations might take a while to render.")
                                 ),
+                                
                                 sidebarLayout(
                                   sidebarPanel(
                                     tags$h3("Sampling Parameters"),
@@ -139,14 +160,17 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                                     ),
                                     actionButton(inputId="go2",
                                                  label="Start Animation"),
-                                  ), #endsidebarpanel
+                                  ),
                                   mainPanel(
                                     column(4,withLoader(imageOutput("hist2"),type="html",loader="loader6")),
                                     column(8,imageOutput("plot2")),
-                                  )#end mainpanel
-                                )# end sidebarlayout
+                                  )
+                            )
                        ),
-                       
+
+###################################################################
+# Normal Proposal & Gamma Target Sub-Tab
+###################################################################                        
                        tabPanel(title = "Normal Proposal & Gamma Target",
                                 h1("Normal Proposal & Gamma Target"),
                                 tags$ul(
@@ -188,7 +212,10 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                  ),
 
 ###################################################################
+# Burning-In Tab
+###################################################################
                  tabPanel(title = "Burning-In",
+                          
                           h1("Initial Values"),
                           withMathJax(sprintf("A markov chain usually needs time to reach its equilibrium distribution as we can see by considering the leftmost animation below. This observation makes sense intuitively since there is an infinite number of choices for the initial value \\(x_0\\). Furthermore, different choices of starting points \\(x_0\\) may result in the over-sampling of regions that actually have a low probability under the equilibrium distribution, since some choices of \\(x_0\\) are better than others. The animations below illustrate that that there are clearly better initial value choices for a target distribution that has mean zero, which are choices closer to the true mean zero in this case. Both Chains clearly converge as number of iterations \\(i\\rightarrow \\infty\\), although the chain with the sub-optimal initial value clearly takes longer to converge than the chain with the optimal initial value. This brings us to the idea of burn-in and its removal, as outlined in the following section.")),
                           p(),
@@ -201,6 +228,7 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                           hr(),
                           tags$br(),
                           tags$br(),
+                          
                           h1("Burning-In"),
                           withMathJax(sprintf("Burning-in a markov chain refers to removing the first \\(n\\) samples before starting to record measurements to compute summary statistics from. Although there is no theoretical justification behind burning-in, the practical idea is to give a chain time to converge to the region that has a high probability under the equilibrium distribution and removing the samples where the chain was not yet converged for more accurate inferences. Now consider an animation example that shows how effective burning-in can be with thirty chains at various initial values. Running the animation with no burn-in removal such as \\(n=0\\) and then with a large amount of burn-in removal such as \\(n=500\\) for a large amount of chains empasizes that discarding the first few iterations can a much more accurate idea of the value the chain converges to, especially for chains with sub-optimal initial values, which is especially useful when the aim is to make inferences based on sample statistics of the chain. You can convince yourself how effective burning-in can be by trying different values of \\(n\\) for the simulation below.")),
                           hr(),
@@ -226,7 +254,10 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                  ),
 
 ###################################################################
+# Thinning Tab
+###################################################################
                  tabPanel(title = "Thinning",
+                          
                           h1("Autocorrelation"),
                           withMathJax(sprintf("Relative to other traditional simulation methods, MCMC techniques and the MH-Algortithm are relatively flexible in terms of being able to sample from complex target distributions. Another major difference between traditional simulation methods and MCMC methods is that a MCMC sample is almost always dependent and followingly autocorrelated. Formally, for a sequence of random variables \\(\\{X_{n}\\}\\), the autocorrelation coefficient between terms \\(\\{X_{n}\\}\\) and \\(\\{X_{n+k}\\}\\) is $$\\rho (n,n+k)=\\frac{Cov(X_{n},X_{n+k})}{\\sqrt{Var(X_{n})Var(X_{n+k})}}$$ which can be recognized as the linear correlation coefficient. It is important to emphasize that the coefficient \\(k\\) in the previous equation is the distance between two terms and is abbreviated as lag. We can visualize autocorrelations of a sample with the autocorrelation function (ACF), which maps lags to autocorrelations where \\(\\rho_{k}\\) is a function of \\(k\\). Below are ACF plots of slowly and rapidly decaying autocorrelations for two different samples.")),
                           tags$br(),
@@ -237,6 +268,7 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                           ),
                           p("Generating a strongly correlated sample can be problematic when the goal is to simulate an uncorrelated sample from an underlying distribution. A process called thinning, which we explore in the next section, can achieve approximate zero correlation of a sample and independence if the sample is normally distributed."),
                           hr(),
+                          
                           h1("Thinning"),
                           withMathJax(sprintf("Thinning refers to the process of keeping only every \\(k_{th}\\) value and discarding all other sampled values. The main benefit of only keeping samples that are spaced out results in an approximate correlation of zero for of the remaining sample, or independence if the sample is normal. Another minor benefit of thinning as outlined by Link and Eaton (2012) of chains is the reduced memory requirement, although storage requirements are not much of a problem in the current age of cheaply available memory. To illustrate the effectiveness of thinning on autocorrelation, we simulate a chain of \\(n=10,000\\) below. After the sample is generated, choose a value for the thinning parameter \\(k\\). Then it can be observed that increasing the value of \\(k\\) can be very effective in reducing autocorrelation for a sample generated by the MH-Algorithm, although there are major drawbacks which are outlined in the next section.")),
                           tags$br(),
@@ -260,6 +292,8 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                           withMathJax(sprintf("The main drawback of thinning as emphasized by Owen (2017) is the loss of precision that is associated with discarding data. If the goal of an analysis is to maximize precision, decreasing the sample size would be counterintuitive. Furthermore, generating mutliple independent chains and considering sample statistics computed among the values of the indepedent chains produces much better results than thinning. Therefore, the tradeoff between precision and an approximate correlation of zero needs to be kept in mind when considering the use of thinning."))
                  ),
 
+###################################################################
+# References Tab
 ###################################################################
                  tabPanel(title = "References",
                           h2("References"),
@@ -293,19 +327,18 @@ ui <- navbarPage(theme = shinytheme("flatly"),
                             tags$li("transformr")
                           ),
                           
-                 )
-###################################################################
-                 
-                 
-,fluid=FALSE                 
+            ),
+            fluid=FALSE                 
 )
 
 
-#MCMC Functions
-###########################################################
+###################################################################
+# MH-algorithms
+###################################################################
 
-#Uniform Proposal & Normal Target 
-###################################
+###################################################################
+# Uniform Proposal & Normal Target 
+###################################################################
 MH_norm <- function(n=100, alpha=1, x_initial=0, mu=0, sd=1) 
 {
   samples <- vector("numeric", n)
@@ -324,8 +357,9 @@ MH_norm <- function(n=100, alpha=1, x_initial=0, mu=0, sd=1)
   samples
 }
 
-#Normal Proposal & Normal Target 
-###################################
+###################################################################
+# Normal Proposal & Normal Target 
+###################################################################
 MH_norm2 <- function(n=100, x_initial=0, mup=0, sdp=1, mut=0, sdt=1)
 {
   samples = numeric(n)  
@@ -340,8 +374,9 @@ MH_norm2 <- function(n=100, x_initial=0, mup=0, sdp=1, mut=0, sdt=1)
   samples  
 }
 
+###################################################################
 #Normal Proposal & Gamma Target 
-###################################
+###################################################################
 MH_norm3 <- function(n=100, mup=0, sdp=1, a=2.3, b=2.7) 
 {
   mu <- a/b
@@ -361,13 +396,14 @@ MH_norm3 <- function(n=100, mup=0, sdp=1, a=2.3, b=2.7)
   samples
 }
 
-
+###################################################################
 #Server
 ###################################################################
 server <- function(input, output) {
  
-#Normal Proposal & Normal Target 
-###################################
+###################################################################
+# Data Generation
+###################################################################
   
   data1 <- function(){
     run1 <- MH_norm(n=input$iter1,alpha=input$p1alpha,x_initial=input$x1_initial,mu=input$t1mu,sd=input$t1sdev)
@@ -390,6 +426,7 @@ server <- function(input, output) {
     sample_df
   }
   
+  # Since runs are saved as gifs, we do not recompute them every app boot
   # data4 <- function(){
   #   run1 <- MH_norm(n=200,alpha=1,x_initial=8,mu=0,sd=0.5)
   #   run2 <- MH_norm(n=200,alpha=1,x_initial=0,mu=0,sd=0.5) 
@@ -397,7 +434,10 @@ server <- function(input, output) {
   #   colnames(sample_df) <- c("x","y1","y2","y3")
   #   sample_df
   # }
-  
+
+###################################################################
+# Generating Animations
+###################################################################  
   hist_reactive1 <- eventReactive(input$go1,
     {
     outfile <- tempfile(fileext='.gif')
@@ -405,7 +445,6 @@ server <- function(input, output) {
     sample_df <- data1()
     
     #Histogram Breakdown of Animation Index
-    
     x <- nrow(sample_df)
     part1 <- as.integer(1*(x/100))
     part2 <- part1 + as.integer(3*(x/100))
@@ -429,8 +468,6 @@ server <- function(input, output) {
     sample_df[(part8+1):part9,"anim_index"] <- 9
     sample_df[(part9+1):part10,"anim_index"] <- 10
   
-    
-    # now make the animation
     p = ggplot(sample_df, aes(x=y)) + 
       geom_histogram(bins=30, fill="#69b3a2", color="#e9ecef", alpha=0.9)+
       labs(title="Sample Histogram",x = 'Sample values', y = 'Count') + 
@@ -441,12 +478,11 @@ server <- function(input, output) {
     
     anim_save("outfile1.gif", animate(p,renderer = gifski_renderer())) # New
     
-    # Return a list containing the filename
     list(src = "outfile1.gif",
          contentType = 'image/gif'
          # width = 400,
          # height = 300,
-         # alt = "This is alternate text"
+         # alt = ""
     )}
   )
   
@@ -455,8 +491,7 @@ server <- function(input, output) {
     outfile <- tempfile(fileext='.gif')
                                     
     sample_df <- data1()
-
-    # now make the animation
+    
     p = ggplot(sample_df, aes(x=x, y=y)) + 
     geom_line(color="#69b3a2", alpha=0.9) + 
     geom_segment(aes(xend = x, yend = y), linetype = 2) + 
@@ -468,15 +503,13 @@ server <- function(input, output) {
                                     
     anim_save("outfile2.gif", animate(p, renderer = gifski_renderer())) # New
                                     
-    # Return a list containing the filename
     list(src = "outfile2.gif",
     contentType = 'image/gif'
     # width = 400,
     # height = 300,
-    # alt = "This is alternate text"
+    # alt = ""
     )}
   )  
-  
   
   hist_reactive2 <- eventReactive(input$go2,
   {
@@ -485,7 +518,6 @@ server <- function(input, output) {
     sample_df <- data2()
     
     #Histogram Breakdown of Animation Index
-    
     x <- nrow(sample_df)
     part1 <- as.integer(1*(x/100))
     part2 <- part1 + as.integer(3*(x/100))
@@ -509,8 +541,6 @@ server <- function(input, output) {
     sample_df[(part8+1):part9,"anim_index"] <- 9
     sample_df[(part9+1):part10,"anim_index"] <- 10
     
-    
-    # now make the animation
     p = ggplot(sample_df, aes(x=y)) + 
       geom_histogram(bins=30, fill="steelblue3", color="#e9ecef", alpha=0.9)+
       labs(title="Sample Histogram",x = 'Sample values', y = 'Count') + 
@@ -521,12 +551,11 @@ server <- function(input, output) {
     
     anim_save("outfile3.gif", animate(p, renderer = gifski_renderer())) # New
     
-    # Return a list containing the filename
     list(src = "outfile3.gif",
          contentType = 'image/gif'
          # width = 400,
          # height = 300,
-         # alt = "This is alternate text"
+         # alt = ""
     )}
   )
   
@@ -536,7 +565,6 @@ server <- function(input, output) {
       
       sample_df <- data2()
       
-      # now make the animation
       p = ggplot(sample_df, aes(x=x, y=y)) + 
         geom_line(color="steelblue3", alpha=0.9) + 
         geom_segment(aes(xend = x, yend = y), linetype = 2) + 
@@ -548,12 +576,11 @@ server <- function(input, output) {
       
       anim_save("outfile4.gif", animate(p, renderer = gifski_renderer())) # New
       
-      # Return a list containing the filename
       list(src = "outfile4.gif",
            contentType = 'image/gif'
            # width = 400,
            # height = 300,
-           # alt = "This is alternate text"
+           # alt = ""
       )}
   )
   
@@ -565,7 +592,6 @@ server <- function(input, output) {
       sample_df <- data3()
       
       #Histogram Breakdown of Animation Index
-      
       x <- nrow(sample_df)
       part1 <- as.integer(1*(x/100))
       part2 <- part1 + as.integer(3*(x/100))
@@ -589,8 +615,6 @@ server <- function(input, output) {
       sample_df[(part8+1):part9,"anim_index"] <- 9
       sample_df[(part9+1):part10,"anim_index"] <- 10
       
-      
-      # now make the animation
       p = ggplot(sample_df, aes(x=y)) + 
         geom_histogram(bins=30, fill="orangered3", color="#e9ecef", alpha=0.9)+
         labs(title="Sample Histogram",x = 'Sample values', y = 'Count') + 
@@ -601,12 +625,11 @@ server <- function(input, output) {
       
       anim_save("outfile5.gif", animate(p, renderer = gifski_renderer())) # New
       
-      # Return a list containing the filename
       list(src = "outfile5.gif",
            contentType = 'image/gif'
            # width = 400,
            # height = 300,
-           # alt = "This is alternate text"
+           # alt = ""
       )}
   )
   
@@ -616,7 +639,6 @@ server <- function(input, output) {
         
         sample_df <- data3()
         
-        # now make the animation
         p = ggplot(sample_df, aes(x=x, y=y)) + 
           geom_line(color="orangered3", alpha=0.9) + 
           geom_segment(aes(xend = x, yend = y), linetype = 2) + 
@@ -628,15 +650,17 @@ server <- function(input, output) {
         
         anim_save("outfile6.gif", animate(p, renderer = gifski_renderer())) # New
         
-        # Return a list containing the filename
         list(src = "outfile6.gif",
              contentType = 'image/gif'
              # width = 400,
              # height = 300,
-             # alt = "This is alternate text"
+             # alt = ""
         )}
   )
   
+###################################################################
+# Gif Setup
+###################################################################  
   plot_unreactive1 <-
     {
         #outfile <- tempfile(fileext='.gif')
@@ -762,7 +786,10 @@ server <- function(input, output) {
            # alt = "This is alternate text"
       )}
   )
-  
+
+###################################################################
+# Saving Visual Outputs
+################################################################### 
   output$hist1 <- renderImage(hist_reactive1(),deleteFile = TRUE)
   output$plot1 <- renderImage(plot_reactive1(),deleteFile = TRUE)
   
@@ -777,7 +804,10 @@ server <- function(input, output) {
   output$plot6 <- renderImage(plot_unreactive3,deleteFile = FALSE)
   
   output$plot7 <- renderImage(plot_reactive4(),deleteFile = TRUE)
-  
+
+###################################################################
+# Additional Interactive and Static Plots
+###################################################################   
   output$static1 <- renderPlot({
     set.seed(11)
     run1 <- MH_norm()
@@ -825,6 +855,7 @@ server <- function(input, output) {
   
 }
 
+###################################################################
 #App Construction
 ###################################################################
 shinyApp(server = server, ui = ui)
