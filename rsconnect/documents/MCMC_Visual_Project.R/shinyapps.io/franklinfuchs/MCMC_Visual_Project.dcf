@@ -1,0 +1,12 @@
+name: MCMC_Visual_Project
+title: MCMC_Visual_Project
+username:
+account: franklinfuchs
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2297042
+bundleId: 3456086
+url: https://franklinfuchs.shinyapps.io/MCMC_Visual_Project/
+when: 1596136618.9837
+asMultiple: FALSE
+asStatic: FALSE
