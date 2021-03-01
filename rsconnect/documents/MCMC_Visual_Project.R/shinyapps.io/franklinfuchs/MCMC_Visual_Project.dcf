@@ -5,8 +5,8 @@ account: franklinfuchs
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2297042
-bundleId: 3456086
+bundleId: 4283974
 url: https://franklinfuchs.shinyapps.io/MCMC_Visual_Project/
-when: 1596136618.9837
+when: 1614574331.46106
 asMultiple: FALSE
 asStatic: FALSE
